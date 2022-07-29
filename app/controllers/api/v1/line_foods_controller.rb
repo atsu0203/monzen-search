@@ -40,6 +40,24 @@ module Api
         end
       end
 
+           # --- ここから追加 ---
+           def replace
+            LineFood.active.other_restaurant(@ordered_food.restaurant.id).each do |line_food|
+              line_food.update_attribute(:active, false)
+            end
+    
+            set_line_food(@ordered_food)
+    
+            if @line_food.save
+              render json: {
+                line_food: @line_food
+              }, status: :created
+            else
+              render json: {}, status: :internal_server_error
+            end
+          end
+          # --- ここまで追加 ---
+
       private
 
       def set_food
