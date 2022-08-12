@@ -6,14 +6,14 @@ export const initialState = {
   restaurantsList: [],
 };
 
-export const restaurantsActionTyps = {
+export const restaurantsActionTypes = {
   FETCHING: 'FETCHING',
   FETCH_SUCCESS: 'FETCH_SUCCESS'
 }
 
 export const restaurantsReducer = (state, action) => {
   switch (action.type) {
-    case restaurantsActionTyps.FETCHING:
+    case restaurantsActionTypes.FETCHING:
       return {
         ...state,
         fetchState: REQUEST_STATE.LOADING,
