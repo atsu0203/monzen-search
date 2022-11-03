@@ -39,6 +39,9 @@ gem "rack-cors"
 gem "foreman"
 gem 'listen'
 gem 'pg'
+gem 'net-imap'
+gem 'net-pop'
+gem 'net-smtp'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
