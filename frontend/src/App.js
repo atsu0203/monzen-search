@@ -15,20 +15,20 @@ function App() {
   return (
     <Router>
       <Switch>
-        // 店舗一覧ページ
         <Route
           exact
           path="/restaurants">
           <Restaurants />
         </Route>
-        // フード一覧ページ
         <Route
           exact
-          path="/foods"
-        >
-          <Foods />
-        </Route>
-        // 注文ページ
+          path="/restaurants/:restaurantsId/foods" 
+          render={({ match }) =>
+          <Foods
+            match={match}
+          />
+      }
+      />
         <Route
           exact
           path="/orders">
