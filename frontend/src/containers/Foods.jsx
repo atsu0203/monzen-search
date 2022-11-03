@@ -1,5 +1,13 @@
-import React, { Fragment, useEffect, useReducer } from 'react';
+// useStateを新たにimport
+import React, { Fragment, useReducer, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { Link } from "react-router-dom";
+
+// components
+import { LocalMallIcon } from '../components/Icons';
+import { FoodWrapper } from '../components/FoodWrapper';
+import Skeleton from '@material-ui/lab/Skeleton';
+import { FoodOrderDialog } from '../components/FoodOrderDialog';
 
 // reducers
 import {
@@ -7,21 +15,17 @@ import {
   foodsActionTyps,
   foodsReducer,
 } from '../reducers/foods';
+
 // apis
 import { fetchFoods } from '../apis/foods';
 
-// constants
-import { REQUEST_STATE } from '../constants';
-
-import styled from 'styled-components';
-import { COLORS } from '../style_constants';
-import { LocalMallIcon } from '../components/Icons';
 // images
 import MainLogo from '../images/logo.png';
 import FoodImage from '../images/food-image.jpg';
-import { FoodWrapper } from '../components/FoodWrapper';
-import Skeleton from '@material-ui/lab/Skeleton'
 
+// constants
+import { COLORS } from '../style_constants';
+import { REQUEST_STATE } from '../constants';
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -52,10 +56,20 @@ const ItemWrapper = styled.div`
   margin: 16px;
 `;
 
+export const Foods = ({
+  match
+}) => {
+  const [foodsState, dispatch] = useReducer(foodsReducer, foodsInitialState);
 
+  // --- ここから追加 ---
+  const initialState = {
+    isOpenOrderDialog: false,
+    selectedFood: null,
+    selectedFoodCount: 1,
+  }
+  const [state, setState] = useState(initialState);
+  // --- ここまで追加 ---
 
-export const Foods = ({match}) => {
-  const [foodsState, dispatch] = useReducer(foodsReducer, foodsInitialState)
   useEffect(() => {
     dispatch({ type: foodsActionTyps.FETCHING });
     fetchFoods(match.params.restaurantsId)
@@ -67,7 +81,7 @@ export const Foods = ({match}) => {
           }
         });
       })
-  }, [])
+  }, []);
 
   return (
     <Fragment>
@@ -80,7 +94,7 @@ export const Foods = ({match}) => {
             <ColoredBagIcon fontSize="large" />
           </Link>
         </BagIconWrapper>
-      </HeaderWrapper>
+         </HeaderWrapper>
       <FoodsList>
         {
           foodsState.fetchState === REQUEST_STATE.LOADING ?
@@ -98,14 +112,29 @@ export const Foods = ({match}) => {
               <ItemWrapper key={food.id}>
                 <FoodWrapper
                   food={food}
-                  onClickFoodWrapper={(food) => console.log(food)}
+                  // フードitemクリック時にsetStateする
+                  onClickFoodWrapper={(food) => setState({
+                    ...state,
+                    selectedFood: food,
+                    isOpenOrderDialog: true,
+                  })}
                   imageUrl={FoodImage}
                 />
               </ItemWrapper>
             )
         }
       </FoodsList>
+      {
+        state.isOpenOrderDialog &&
+          <FoodOrderDialog
+            food={state.selectedFood}
+            isOpen={state.isOpenOrderDialog}
+            onClose={() => setState({
+              ...state,
+              isOpenOrderDialog: false,
+            })}
+          />
+      }
     </Fragment>
   )
 }
-
